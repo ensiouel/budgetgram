@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package callback.v1;
+
+enum CategoryDirection {
+  CATEGORY_DIRECTION_UNSPECIFIED = 0;
+  CATEGORY_DIRECTION_EXPENSE = 1;
+  CATEGORY_DIRECTION_INCOME = 2;
+}
+
+message ShowSettings {}
+
+message ShowCategoriesSettings {
+  CategoryDirection category_direction = 1;
+  int64 page = 2;
+  int64 page_size = 3;
+}
+
+message ShowCategorySettings {
+  int64 category_id = 1;
+  ShowCategoriesSettings navigation_from = 2;
+}
+
+message CreateCategory {
+  CategoryDirection category_direction = 1;
+}
+
+message UpdateCategory {
+  enum Field {
+    FIELD_UNSPECIFIED = 0;
+    FIELD_NAME = 1;
+    FIELD_LABEL = 2;
+    FIELD_DIRECTION = 4;
+    FIELD_IS_REGULAR = 5;
+    FIELD_TARGET_AMOUNT = 6;
+  }
+  int64 category_id = 1;
+  Field field = 2;
+}
+
+message DeleteCategory {
+  int64 category_id = 1;
+}
+
+message Callback {
+  oneof query {
+    ShowSettings show_settings = 1;
+    ShowCategoriesSettings show_categories_settings = 2;
+    ShowCategorySettings show_category_settings = 3;
+    CreateCategory create_category = 4;
+    UpdateCategory update_category = 5;
+    DeleteCategory delete_category = 6;
+  }
+}
