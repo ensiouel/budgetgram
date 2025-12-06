@@ -10,5 +10,5 @@ CREATE TABLE categories
     created_at    TIMESTAMP WITH TIME ZONE NOT NULL,
     updated_at    TIMESTAMP WITH TIME ZONE NOT NULL,
     deleted_at    TIMESTAMP WITH TIME ZONE,
-    UNIQUE (chat_id, name, direction)
+    UNIQUE (chat_id, label, name)
 );

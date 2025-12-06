@@ -1,3 +1,4 @@
+use async_trait::async_trait;
 use crate::handlers::callback::MessageBuilder;
 use crate::proto::callback::v1::callback::Query;
 use crate::proto::callback::v1::{Callback, CategoryDirection, ShowCategoriesSettings};
@@ -5,12 +6,13 @@ use teloxide::types::{InlineKeyboardButton, InlineKeyboardMarkup};
 
 pub struct ShowSettingsMessageBuilder {}
 
+#[async_trait::async_trait]
 impl MessageBuilder for ShowSettingsMessageBuilder {
-    fn text(&self) -> String {
-        "⚙️ Выберите раздел настроек".to_string()
+    async fn text(&self) -> String {
+        "⚙️ Выберите раздел настроек".to_string().clone()
     }
 
-    fn reply_markup(&self) -> InlineKeyboardMarkup {
+    async fn reply_markup(&self) -> InlineKeyboardMarkup {
         const PAGE_SIZE: i64 = 8;
         InlineKeyboardMarkup::default().append_row(vec![
             InlineKeyboardButton::callback(

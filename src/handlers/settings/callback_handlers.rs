@@ -16,8 +16,8 @@ pub async fn show_settings(
     let builder = ShowSettingsMessageBuilder::new();
 
     if let Some(message) = callback_query.regular_message() {
-        bot.edit_text(message, builder.text())
-            .reply_markup(builder.reply_markup())
+        bot.edit_text(message, builder.text().await)
+            .reply_markup(builder.reply_markup().await)
             .await?;
     }
 

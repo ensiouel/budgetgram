@@ -2,6 +2,7 @@ use crate::models::category::Category;
 use crate::proto::callback::v1::CategoryDirection;
 use chrono::{DateTime, Utc};
 use sqlx::{types::time::OffsetDateTime, FromRow, PgPool};
+use std::sync::Arc;
 
 #[derive(Debug, Clone, FromRow)]
 pub struct RawCategory {
@@ -61,8 +62,8 @@ pub struct Categories {
 }
 
 impl Categories {
-    pub fn new(db: PgPool) -> Self {
-        Categories { db }
+    pub fn new(db: PgPool) -> Arc<Self> {
+        Arc::new(Self { db })
     }
 }
 

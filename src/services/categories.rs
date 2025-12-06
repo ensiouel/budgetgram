@@ -2,6 +2,7 @@ use crate::models::category::Category;
 use crate::proto::callback::v1::CategoryDirection;
 use crate::repositories::categories::Repository;
 use chrono::{DateTime, Utc};
+use std::sync::Arc;
 
 pub type ServiceError = Box<dyn std::error::Error + Sync + Send>;
 
@@ -44,12 +45,12 @@ pub trait Service: Send + Sync {
 }
 
 pub struct Categories {
-    repository: Box<dyn Repository>,
+    repository: Arc<dyn Repository>,
 }
 
 impl Categories {
-    fn new(repository: Box<dyn Repository>) -> Self {
-        Categories { repository }
+    pub fn new(repository: Arc<dyn Repository>) -> Arc<Self> {
+        Arc::new(Self { repository })
     }
 }
 
