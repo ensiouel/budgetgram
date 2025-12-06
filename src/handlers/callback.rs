@@ -44,6 +44,16 @@ pub async fn match_callback_query(
             )
             .await?;
         }
+        Query::ShowCategorySettings(show_category_settings) => {
+            categories::callback_handlers::show_category_settings(
+                bot.to_owned(),
+                dialog.to_owned(),
+                callback_query.to_owned(),
+                show_category_settings.to_owned(),
+                categories_service,
+            )
+            .await?;
+        }
         Query::CreateCategory(create_category) => {
             categories::callback_handlers::create_category(
                 bot.to_owned(),

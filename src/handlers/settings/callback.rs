@@ -1,4 +1,3 @@
-use async_trait::async_trait;
 use crate::handlers::callback::MessageBuilder;
 use crate::proto::callback::v1::callback::Query;
 use crate::proto::callback::v1::{Callback, CategoryDirection, ShowCategoriesSettings};

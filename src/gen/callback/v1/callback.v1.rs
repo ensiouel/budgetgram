@@ -39,8 +39,9 @@ pub mod update_category {
         Unspecified = 0,
         Name = 1,
         Label = 2,
-        TargetAmount = 3,
         Direction = 4,
+        IsRegular = 5,
+        TargetAmount = 6,
     }
     impl Field {
         /// String value of the enum field names used in the ProtoBuf definition.
@@ -52,8 +53,9 @@ pub mod update_category {
                 Self::Unspecified => "FIELD_UNSPECIFIED",
                 Self::Name => "FIELD_NAME",
                 Self::Label => "FIELD_LABEL",
-                Self::TargetAmount => "FIELD_TARGET_AMOUNT",
                 Self::Direction => "FIELD_DIRECTION",
+                Self::IsRegular => "FIELD_IS_REGULAR",
+                Self::TargetAmount => "FIELD_TARGET_AMOUNT",
             }
         }
         /// Creates an enum from field names used in the ProtoBuf definition.
@@ -62,8 +64,9 @@ pub mod update_category {
                 "FIELD_UNSPECIFIED" => Some(Self::Unspecified),
                 "FIELD_NAME" => Some(Self::Name),
                 "FIELD_LABEL" => Some(Self::Label),
-                "FIELD_TARGET_AMOUNT" => Some(Self::TargetAmount),
                 "FIELD_DIRECTION" => Some(Self::Direction),
+                "FIELD_IS_REGULAR" => Some(Self::IsRegular),
+                "FIELD_TARGET_AMOUNT" => Some(Self::TargetAmount),
                 _ => None,
             }
         }

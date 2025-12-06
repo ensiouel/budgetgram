@@ -3,7 +3,6 @@ use crate::handlers::settings::callback::ShowSettingsMessageBuilder;
 use crate::telegram::{Dialog, HandlerResult};
 use teloxide::prelude::*;
 use teloxide::Bot;
-use teloxide::dispatching::dialogue::GetChatId;
 
 pub async fn show_settings(bot: Bot, _dialog: Dialog, message: Message) -> HandlerResult {
     let builder = ShowSettingsMessageBuilder::new();

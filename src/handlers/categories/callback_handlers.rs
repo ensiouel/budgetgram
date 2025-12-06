@@ -1,13 +1,15 @@
 use crate::handlers::callback::MessageBuilder;
 use crate::handlers::categories::callback::{
     CreateCategoryMessageBuilder, ShowCategoriesSettingsMessageBuilder,
+    ShowCategorySettingsMessageBuilder,
 };
-use crate::proto::callback::v1::{CreateCategory, ShowCategoriesSettings};
+use crate::proto::callback::v1::{CreateCategory, ShowCategoriesSettings, ShowCategorySettings};
 use crate::services;
 use crate::telegram::{Dialog, HandlerResult};
 use std::sync::Arc;
 use teloxide::prelude::*;
 use teloxide::sugar::bot::BotMessagesExt;
+use teloxide::types::ParseMode;
 use teloxide::Bot;
 
 pub async fn create_category(
@@ -39,6 +41,29 @@ pub async fn show_categories_settings(
     if let Some(message) = callback_query.regular_message() {
         bot.edit_text(message, builder.text().await)
             .reply_markup(builder.reply_markup().await)
+            .await?;
+    }
+
+    Ok(())
+}
+
+pub async fn show_category_settings(
+    bot: Bot,
+    _dialog: Dialog,
+    callback_query: CallbackQuery,
+    query: ShowCategorySettings,
+    categories_service: Arc<dyn services::categories::Service>,
+) -> HandlerResult {
+    let builder = ShowCategorySettingsMessageBuilder::new(
+        callback_query.to_owned(),
+        categories_service,
+        query,
+    );
+
+    if let Some(message) = callback_query.regular_message() {
+        bot.edit_text(message, builder.text().await)
+            .reply_markup(builder.reply_markup().await)
+            .parse_mode(ParseMode::MarkdownV2)
             .await?;
     }
 
