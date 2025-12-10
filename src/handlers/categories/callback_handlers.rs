@@ -1,9 +1,11 @@
 use crate::handlers::callback::MessageBuilder;
 use crate::handlers::categories::callback::{
     CreateCategoryMessageBuilder, ShowCategoriesSettingsMessageBuilder,
-    ShowCategorySettingsMessageBuilder,
+    ShowCategorySettingsMessageBuilder, UpdateCategoryMessageBuilder,
 };
-use crate::proto::callback::v1::{CreateCategory, ShowCategoriesSettings, ShowCategorySettings};
+use crate::proto::callback::v1::{
+    CreateCategory, ShowCategoriesSettings, ShowCategorySettings, UpdateCategory,
+};
 use crate::services;
 use crate::telegram::{Dialog, HandlerResult};
 use std::sync::Arc;
@@ -62,6 +64,26 @@ pub async fn show_category_settings(
 
     if let Some(message) = callback_query.regular_message() {
         bot.edit_text(message, builder.text().await)
+            .reply_markup(builder.reply_markup().await)
+            .parse_mode(ParseMode::MarkdownV2)
+            .await?;
+    }
+
+    Ok(())
+}
+
+pub async fn update_category(
+    bot: Bot,
+    _dialog: Dialog,
+    callback_query: CallbackQuery,
+    query: UpdateCategory,
+    categories_service: Arc<dyn services::categories::Service>,
+) -> HandlerResult {
+    let builder =
+        UpdateCategoryMessageBuilder::new(callback_query.to_owned(), categories_service, query);
+
+    if let Some(message) = callback_query.regular_message() {
+        bot.send_message(message.chat.id, builder.text().await)
             .reply_markup(builder.reply_markup().await)
             .parse_mode(ParseMode::MarkdownV2)
             .await?;

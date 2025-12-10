@@ -63,6 +63,16 @@ pub async fn match_callback_query(
             )
             .await?;
         }
+        Query::UpdateCategory(update_category) => {
+            categories::callback_handlers::update_category(
+                bot.to_owned(),
+                dialog.to_owned(),
+                callback_query.to_owned(),
+                update_category.to_owned(),
+                categories_service,
+            )
+                .await?;
+        }
         _ => {}
     }
 

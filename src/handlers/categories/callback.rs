@@ -235,7 +235,7 @@ impl MessageBuilder for ShowCategorySettingsMessageBuilder {
                     String::try_from(Callback {
                         query: Option::from(Query::UpdateCategory(UpdateCategory {
                             category_id: self.query.category_id,
-                            field: i32::from(Field::Name),
+                            field: i32::from(Field::Direction),
                         })),
                     })
                     .unwrap(),
@@ -294,5 +294,96 @@ impl MessageBuilder for ShowCategorySettingsMessageBuilder {
                     .unwrap(),
                 ),
             ])
+    }
+}
+
+pub struct UpdateCategoryMessageBuilder {
+    callback_query: CallbackQuery,
+    service: Arc<dyn services::categories::Service>,
+    query: UpdateCategory,
+}
+
+impl UpdateCategoryMessageBuilder {
+    pub fn new(
+        callback_query: CallbackQuery,
+        service: Arc<dyn services::categories::Service>,
+        query: UpdateCategory,
+    ) -> Self {
+        Self {
+            callback_query,
+            service,
+            query,
+        }
+    }
+}
+
+#[async_trait::async_trait]
+impl MessageBuilder for UpdateCategoryMessageBuilder {
+    async fn text(&self) -> String {
+        let category = self
+            .service
+            .get_category(
+                self.callback_query.regular_message().unwrap().chat.id.0,
+                self.query.category_id,
+            )
+            .await
+            .unwrap();
+
+        match Field::try_from(self.query.field).ok() {
+            Some(Field::Name) => format!(
+                "✏️ *Изменение названия категории {} {}*
+
+«*{}*» → _Новое название_
+
+_Введите новое название категории\\._",
+                category.label,
+                category.name,
+                category.name
+            ),
+            Some(Field::Label) => format!(
+                "🏷 *Изменение ярлыка категории {} {}*
+
+«{}» → _Новый ярлык_
+
+Отправьте новый символ \\(например, 🛒, 🍎, 🏷️\\)\\.",
+                category.label,
+                category.name,
+                category.label
+            ),
+            Some(Field::Direction) => "todo".to_string(),
+            Some(Field::IsRegular) => "todo".to_string(),
+            Some(Field::TargetAmount) => match category.direction {
+                CategoryDirection::Expense => format!(
+                    "✏️ *Изменение лимита категории {} {}*
+
+«*{:?}*» → _Новый лимит_
+
+_Введите новую сумму \\(или «0» для удаления лимита\\)\\._",
+                    category.label,
+                    category.name,
+                    category.target_amount.unwrap_or(0),
+                ),
+                CategoryDirection::Income => format!(
+                    "✏️ *Изменение плана категории {} {}*
+
+«*{:?}*» → _Новый план_
+
+_Введите новую целевую сумму \\(или «0» для удаления плана\\)\\._",
+                    category.label,
+                    category.name,
+                    category.target_amount.unwrap_or(0),
+                ),
+                CategoryDirection::Unspecified => {
+                    unreachable!()
+                }
+            },
+            _ => {
+                unreachable!()
+            }
+        }
+    }
+
+    async fn reply_markup(&self) -> InlineKeyboardMarkup {
+        InlineKeyboardMarkup::default()
     }
 }
