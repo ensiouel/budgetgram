@@ -25,6 +25,8 @@ message CreateCategory {
   CategoryDirection category_direction = 1;
 }
 
+message CancelCreateCategory {}
+
 message UpdateCategory {
   enum Field {
     FIELD_UNSPECIFIED = 0;
@@ -38,9 +40,13 @@ message UpdateCategory {
   Field field = 2;
 }
 
+message CancelUpdateCategory {}
+
 message DeleteCategory {
   int64 category_id = 1;
 }
+
+message CancelDeleteCategory {}
 
 message Callback {
   oneof query {
@@ -48,7 +54,10 @@ message Callback {
     ShowCategoriesSettings show_categories_settings = 2;
     ShowCategorySettings show_category_settings = 3;
     CreateCategory create_category = 4;
-    UpdateCategory update_category = 5;
-    DeleteCategory delete_category = 6;
+    CancelCreateCategory cancel_create_category = 5;
+    UpdateCategory update_category = 6;
+    CancelUpdateCategory cancel_update_category = 7;
+    DeleteCategory delete_category = 8;
+    CancelDeleteCategory cancel_delete_category = 9;
   }
 }

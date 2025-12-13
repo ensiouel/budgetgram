@@ -2,8 +2,8 @@ use crate::handlers::callback::MessageBuilder;
 use crate::proto::callback::v1::callback::Query;
 use crate::proto::callback::v1::update_category::Field;
 use crate::proto::callback::v1::{
-    Callback, CategoryDirection, CreateCategory, DeleteCategory, ShowCategoriesSettings,
-    ShowCategorySettings, ShowSettings, UpdateCategory,
+    Callback, CancelUpdateCategory, CategoryDirection, CreateCategory, DeleteCategory,
+    ShowCategoriesSettings, ShowCategorySettings, ShowSettings, UpdateCategory,
 };
 use crate::services;
 use std::sync::Arc;
@@ -331,32 +331,28 @@ impl MessageBuilder for UpdateCategoryMessageBuilder {
 
         match Field::try_from(self.query.field).ok() {
             Some(Field::Name) => format!(
-                "✏️ *Изменение названия категории {} {}*
+                "✏️ *Изменение названия категории: {} {}*
 
-«*{}*» → _Новое название_
+*Текущее название:* {}
 
 _Введите новое название категории\\._",
-                category.label,
-                category.name,
-                category.name
+                category.label, category.name, category.name
             ),
             Some(Field::Label) => format!(
-                "🏷 *Изменение ярлыка категории {} {}*
+                "🏷 *Изменение ярлыка категории: {} {}*
 
-«{}» → _Новый ярлык_
+*Текущий ярлык:* {}
 
 Отправьте новый символ \\(например, 🛒, 🍎, 🏷️\\)\\.",
-                category.label,
-                category.name,
-                category.label
+                category.label, category.name, category.label
             ),
             Some(Field::Direction) => "todo".to_string(),
             Some(Field::IsRegular) => "todo".to_string(),
             Some(Field::TargetAmount) => match category.direction {
                 CategoryDirection::Expense => format!(
-                    "✏️ *Изменение лимита категории {} {}*
+                    "✏️ *Изменение лимита категории: {} {}*
 
-«*{:?}*» → _Новый лимит_
+*Текущий лимит:* {:?}
 
 _Введите новую сумму \\(или «0» для удаления лимита\\)\\._",
                     category.label,
@@ -364,9 +360,10 @@ _Введите новую сумму \\(или «0» для удаления л
                     category.target_amount.unwrap_or(0),
                 ),
                 CategoryDirection::Income => format!(
-                    "✏️ *Изменение плана категории {} {}*
+                    "✏️ *Изменение плана*
 
-«*{:?}*» → _Новый план_
+*Категория:* «{} {}»
+*Текущий план:* {:?}
 
 _Введите новую целевую сумму \\(или «0» для удаления плана\\)\\._",
                     category.label,
@@ -384,6 +381,12 @@ _Введите новую целевую сумму \\(или «0» для уд
     }
 
     async fn reply_markup(&self) -> InlineKeyboardMarkup {
-        InlineKeyboardMarkup::default()
+        InlineKeyboardMarkup::default().append_row(vec![InlineKeyboardButton::callback(
+            "❌ Отменить",
+            String::try_from(Callback {
+                query: Option::from(Query::CancelUpdateCategory(CancelUpdateCategory {})),
+            })
+            .unwrap(),
+        )])
     }
 }

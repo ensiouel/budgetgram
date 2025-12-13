@@ -25,6 +25,9 @@ pub struct CreateCategory {
     pub category_direction: i32,
 }
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CancelCreateCategory {
+}
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct UpdateCategory {
     #[prost(int64, tag="1")]
     pub category_id: i64,
@@ -73,13 +76,19 @@ pub mod update_category {
     }
 }
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CancelUpdateCategory {
+}
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct DeleteCategory {
     #[prost(int64, tag="1")]
     pub category_id: i64,
 }
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CancelDeleteCategory {
+}
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct Callback {
-    #[prost(oneof="callback::Query", tags="1, 2, 3, 4, 5, 6")]
+    #[prost(oneof="callback::Query", tags="1, 2, 3, 4, 5, 6, 7, 8, 9")]
     pub query: ::core::option::Option<callback::Query>,
 }
 /// Nested message and enum types in `Callback`.
@@ -95,9 +104,15 @@ pub mod callback {
         #[prost(message, tag="4")]
         CreateCategory(super::CreateCategory),
         #[prost(message, tag="5")]
-        UpdateCategory(super::UpdateCategory),
+        CancelCreateCategory(super::CancelCreateCategory),
         #[prost(message, tag="6")]
+        UpdateCategory(super::UpdateCategory),
+        #[prost(message, tag="7")]
+        CancelUpdateCategory(super::CancelUpdateCategory),
+        #[prost(message, tag="8")]
         DeleteCategory(super::DeleteCategory),
+        #[prost(message, tag="9")]
+        CancelDeleteCategory(super::CancelDeleteCategory),
     }
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
