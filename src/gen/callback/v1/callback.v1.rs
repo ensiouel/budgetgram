@@ -7,17 +7,13 @@ pub struct ShowSettings {
 pub struct ShowCategoriesSettings {
     #[prost(enumeration="CategoryDirection", tag="1")]
     pub category_direction: i32,
-    #[prost(int64, tag="2")]
-    pub page: i64,
-    #[prost(int64, tag="3")]
-    pub page_size: i64,
 }
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ShowCategorySettings {
     #[prost(int64, tag="1")]
     pub category_id: i64,
     #[prost(message, optional, tag="2")]
-    pub navigation_from: ::core::option::Option<ShowCategoriesSettings>,
+    pub navigated_from: ::core::option::Option<ShowCategoriesSettings>,
 }
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct CreateCategory {

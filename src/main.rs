@@ -1,11 +1,11 @@
-use std::sync::Arc;
+use budgetgram::handlers;
 use budgetgram::handlers::callback::match_callback_query;
 use budgetgram::handlers::settings;
-use budgetgram::proto::callback::v1::UpdateCategory;
 use budgetgram::repositories;
 use budgetgram::services;
-use budgetgram::telegram::{Command, Dialog, HandlerResult, State};
+use budgetgram::telegram::{Command, State};
 use sqlx::postgres::PgPoolOptions;
+use std::sync::Arc;
 use teloxide::{dispatching::dialogue::InMemStorage, prelude::*};
 
 #[tokio::main]
@@ -13,7 +13,6 @@ async fn main() {
     dotenvy::dotenv().ok();
 
     pretty_env_logger::init();
-    log::info!("Starting budgetgram bot...");
 
     let pool = PgPoolOptions::new()
         .max_connections(5)
@@ -34,8 +33,9 @@ async fn main() {
     let categories_repository = repositories::categories::Categories::new(pool.clone());
     let categories_service = services::categories::Categories::new(categories_repository);
 
-    let bot = Bot::from_env();
+    log::info!("Starting budgetgram bot...");
 
+    let bot = Bot::from_env();
     Dispatcher::builder(
         bot,
         dptree::entry()
@@ -49,13 +49,11 @@ async fn main() {
                         ),
                     )
                     .branch(
-                        dptree::case![State::UpdateCategory(update_category)].endpoint(
-                            async |bot: Bot,
-                                   _dialog: Dialog,
-                                   _message: Message,
-                                   _update_category: UpdateCategory|
-                                   -> HandlerResult { Ok(()) },
-                        ),
+                        dptree::case![State::CreateCategory {
+                            answer_message_id,
+                            callback
+                        }]
+                        .endpoint(handlers::categories::message_handlers::create_category),
                     ),
             )
             .branch(Update::filter_callback_query().endpoint(match_callback_query)),

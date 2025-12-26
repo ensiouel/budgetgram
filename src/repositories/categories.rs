@@ -1,8 +1,9 @@
 use crate::models::category::Category;
 use crate::proto::callback::v1::CategoryDirection;
 use chrono::{DateTime, Utc};
-use sqlx::{types::time::OffsetDateTime, FromRow, PgPool};
+use sqlx::{FromRow, PgPool, types::time::OffsetDateTime};
 use std::sync::Arc;
+use crate::repositories::utils;
 
 #[derive(Debug, Clone, FromRow)]
 pub struct RawCategory {
@@ -31,15 +32,11 @@ impl TryFrom<RawCategory> for Category {
                 .unwrap_or(CategoryDirection::Unspecified),
             is_regular: raw.is_regular,
             target_amount: raw.target_amount,
-            created_at: convert_offset_to_chrono(raw.created_at),
-            updated_at: convert_offset_to_chrono(raw.updated_at),
-            deleted_at: raw.deleted_at.map(convert_offset_to_chrono),
+            created_at: utils::convert_offset_to_chrono(raw.created_at),
+            updated_at: utils::convert_offset_to_chrono(raw.updated_at),
+            deleted_at: raw.deleted_at.map(utils::convert_offset_to_chrono),
         })
     }
-}
-
-fn convert_offset_to_chrono(offset: OffsetDateTime) -> DateTime<Utc> {
-    DateTime::from_timestamp(offset.unix_timestamp(), 0).expect("Invalid timestamp")
 }
 
 pub type RepositoryError = Box<dyn std::error::Error + Sync + Send>;
@@ -127,7 +124,7 @@ impl Repository for Categories {
             RawCategory,
             "src/repositories/queries/select_categories.sql",
             chat_id,
-            i32::try_from(direction).unwrap(),
+            i32::try_from(direction).unwrap()
         )
         .fetch_all(&self.db)
         .await?;

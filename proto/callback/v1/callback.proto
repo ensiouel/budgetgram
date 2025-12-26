@@ -8,17 +8,15 @@ enum CategoryDirection {
   CATEGORY_DIRECTION_INCOME = 2;
 }
 
-message ShowSettings {}
+message ShowMainSettings {}
 
-message ShowCategoriesSettings {
+message ShowCategoryList {
   CategoryDirection category_direction = 1;
-  int64 page = 2;
-  int64 page_size = 3;
 }
 
 message ShowCategorySettings {
   int64 category_id = 1;
-  ShowCategoriesSettings navigation_from = 2;
+  ShowCategoryList navigated_from = 2;
 }
 
 message CreateCategory {
@@ -32,9 +30,9 @@ message UpdateCategory {
     FIELD_UNSPECIFIED = 0;
     FIELD_NAME = 1;
     FIELD_LABEL = 2;
-    FIELD_DIRECTION = 4;
-    FIELD_IS_REGULAR = 5;
-    FIELD_TARGET_AMOUNT = 6;
+    FIELD_DIRECTION = 3;
+    FIELD_IS_REGULAR = 4;
+    FIELD_TARGET_AMOUNT = 5;
   }
   int64 category_id = 1;
   Field field = 2;
@@ -48,10 +46,25 @@ message DeleteCategory {
 
 message CancelDeleteCategory {}
 
+message CreateTransaction {
+  int64 transaction_id = 1;
+  CategoryDirection category_direction = 2;
+  bool is_short_mode = 3;
+}
+
+message CancelCreateTransaction {
+  int64 transaction_id = 1;
+}
+
+message ApproveTransactionCategory {
+  int64 transaction_id = 1;
+  int64 category_id = 2;
+}
+
 message Callback {
   oneof query {
-    ShowSettings show_settings = 1;
-    ShowCategoriesSettings show_categories_settings = 2;
+    ShowMainSettings show_main_settings = 1;
+    ShowCategoryList show_category_list = 2;
     ShowCategorySettings show_category_settings = 3;
     CreateCategory create_category = 4;
     CancelCreateCategory cancel_create_category = 5;
@@ -59,5 +72,8 @@ message Callback {
     CancelUpdateCategory cancel_update_category = 7;
     DeleteCategory delete_category = 8;
     CancelDeleteCategory cancel_delete_category = 9;
+    CreateTransaction create_transaction = 10;
+    CancelCreateTransaction cancel_create_transaction = 11;
+    ApproveTransactionCategory approve_transaction_category = 12;
   }
 }

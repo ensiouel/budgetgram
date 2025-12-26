@@ -1,12 +1,12 @@
 use crate::handlers::{categories, settings};
-use crate::proto::callback::v1::callback::Query;
 use crate::proto::callback::v1::Callback;
+use crate::proto::callback::v1::callback::Query;
 use crate::services;
 use crate::telegram::{Dialog, HandlerResult};
 use std::sync::Arc;
+use teloxide::Bot;
 use teloxide::prelude::*;
 use teloxide::types::InlineKeyboardMarkup;
-use teloxide::Bot;
 
 pub async fn match_callback_query(
     bot: Bot,
@@ -63,6 +63,14 @@ pub async fn match_callback_query(
             )
             .await?;
         }
+        Query::CancelCreateCategory(_) => {
+            categories::callback_handlers::cancel_create_category(
+                bot.to_owned(),
+                dialog.to_owned(),
+                callback_query.to_owned(),
+            )
+            .await?;
+        }
         Query::UpdateCategory(update_category) => {
             categories::callback_handlers::update_category(
                 bot.to_owned(),
@@ -71,7 +79,7 @@ pub async fn match_callback_query(
                 update_category.to_owned(),
                 categories_service,
             )
-                .await?;
+            .await?;
         }
         _ => {}
     }
@@ -84,6 +92,16 @@ pub async fn match_callback_query(
 
 #[async_trait::async_trait]
 pub trait MessageBuilder {
-    async fn text(&self) -> String;
-    async fn reply_markup(&self) -> InlineKeyboardMarkup;
+    async fn text(&self) -> Result<String, Box<dyn std::error::Error + Send + Sync>>;
+    async fn reply_markup(
+        &self,
+    ) -> Result<InlineKeyboardMarkup, Box<dyn std::error::Error + Send + Sync>>;
+}
+
+#[async_trait::async_trait]
+pub trait CancellableMessageBuilder {
+    async fn text(&self) -> Result<String, Box<dyn std::error::Error + Send + Sync>>;
+    async fn reply_markup(
+        &self,
+    ) -> Result<InlineKeyboardMarkup, Box<dyn std::error::Error + Send + Sync>>;
 }
