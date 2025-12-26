@@ -5,7 +5,7 @@ CREATE TABLE transactions
     category_id     BIGSERIAL REFERENCES categories (id),
     amount          BIGINT      NOT NULL,
     amount_modified BOOLEAN     NOT NULL DEFAULT FALSE,
-    description     TEXT,
+    description     TEXT        NOT NULL DEFAULT '',
     currency_code   CHAR(3)     NOT NULL,
     created_at      TIMESTAMPTZ NOT NULL,
     updated_at      TIMESTAMPTZ NOT NULL,

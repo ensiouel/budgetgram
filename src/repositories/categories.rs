@@ -1,6 +1,5 @@
 use crate::models::category::Category;
 use crate::proto::callback::v1::CategoryDirection;
-use chrono::{DateTime, Utc};
 use sqlx::{FromRow, PgPool, types::time::OffsetDateTime};
 use std::sync::Arc;
 use crate::repositories::utils;
@@ -85,7 +84,7 @@ impl Repository for Categories {
     }
 
     async fn update_category(&self, category: Category) -> Result<(), RepositoryError> {
-        let _ = sqlx::query_file!(
+        sqlx::query_file!(
             "src/repositories/queries/update_category.sql",
             category.id,
             category.chat_id,
@@ -138,7 +137,7 @@ impl Repository for Categories {
     }
 
     async fn delete_category(&self, chat_id: i64, id: i64) -> Result<(), RepositoryError> {
-        let _ = sqlx::query_file!(
+        sqlx::query_file!(
             "src/repositories/queries/delete_category.sql",
             id,
             chat_id,

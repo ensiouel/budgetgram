@@ -1,7 +1,5 @@
 use crate::models::transaction::{CurrencyCode, Transaction};
-use crate::proto::callback::v1::CategoryDirection;
 use crate::repositories::utils;
-use chrono::{DateTime, Utc};
 use sqlx::{FromRow, PgPool, types::time::OffsetDateTime};
 use std::sync::Arc;
 
@@ -67,25 +65,57 @@ impl Repository for Transactions {
             transaction.chat_id,
             transaction.amount,
             transaction.description,
-            transaction.currency_code,
-            OffsetDateTime::from_unix_timestamp(category.created_at.timestamp()).unwrap(),
-            OffsetDateTime::from_unix_timestamp(category.updated_at.timestamp()).unwrap()
+            transaction.currency_code.as_code_str(),
+            OffsetDateTime::from_unix_timestamp(transaction.created_at.timestamp()).unwrap(),
+            OffsetDateTime::from_unix_timestamp(transaction.updated_at.timestamp()).unwrap()
         )
-            .fetch_one(&self.db)
-            .await?;
+        .fetch_one(&self.db)
+        .await?;
 
         Ok(raw.id)
     }
 
     async fn get_transaction(&self, chat_id: i64, id: i64) -> Result<Transaction, RepositoryError> {
-        todo!()
+        let raw = sqlx::query_file_as!(
+            RawTransaction,
+            "src/repositories/queries/get_transaction.sql",
+            id,
+            chat_id,
+        )
+        .fetch_one(&self.db)
+        .await?;
+
+        Transaction::try_from(raw).map_err(|e| e.into())
     }
 
     async fn update_transaction(&self, transaction: Transaction) -> Result<(), RepositoryError> {
-        todo!()
+        sqlx::query_file!(
+            "src/repositories/queries/update_transaction.sql",
+            transaction.id,
+            transaction.chat_id,
+            transaction.category_id,
+            transaction.amount,
+            transaction.amount_modified,
+            transaction.description,
+            transaction.currency_code.as_code_str(),
+            OffsetDateTime::from_unix_timestamp(transaction.updated_at.timestamp()).unwrap()
+        )
+        .fetch_one(&self.db)
+        .await?;
+
+        Ok(())
     }
 
     async fn delete_transaction(&self, chat_id: i64, id: i64) -> Result<(), RepositoryError> {
-        todo!()
+        sqlx::query_file!(
+            "src/repositories/queries/delete_transaction.sql",
+            id,
+            chat_id,
+            OffsetDateTime::now_utc(),
+        )
+        .fetch_one(&self.db)
+        .await?;
+
+        Ok(())
     }
 }
