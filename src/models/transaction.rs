@@ -43,7 +43,7 @@ impl CurrencyCode {
 pub struct Transaction {
     pub id: i64,
     pub chat_id: i64,
-    pub category_id: i64,
+    pub category_id: Option<i64>,
     pub amount: i64,
     pub amount_modified: bool,
     pub description: String,

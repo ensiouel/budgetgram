@@ -1,9 +1,6 @@
 use crate::handlers::callback;
 use crate::proto::callback::v1::callback::Query;
-use crate::proto::callback::v1::{
-    Callback, CancelCreateCategory, CategoryDirection, CreateCategory, ShowCategoriesSettings,
-    ShowCategorySettings,
-};
+use crate::proto::callback::v1::{Callback, CancelCreateCategory, CategoryDirection, CreateCategory, ShowCategoryList};
 use teloxide::types::{InlineKeyboardButton, InlineKeyboardMarkup};
 
 pub struct MessageBuilder {
@@ -80,7 +77,7 @@ impl callback::CancellableMessageBuilder for CancellableMessageBuilder {
             InlineKeyboardMarkup::default().append_row(vec![InlineKeyboardButton::callback(
                 "🔙 К настройкам категорий",
                 String::try_from(Callback {
-                    query: Option::from(Query::ShowCategoriesSettings(ShowCategoriesSettings {
+                    query: Option::from(Query::ShowCategoryList(ShowCategoryList {
                         category_direction: self.callback.category_direction,
                     })),
                 })

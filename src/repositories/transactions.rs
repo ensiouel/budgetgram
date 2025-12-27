@@ -7,7 +7,7 @@ use std::sync::Arc;
 pub struct RawTransaction {
     pub id: i64,
     pub chat_id: i64,
-    pub category_id: i64,
+    pub category_id: Option<i64>,
     pub amount: i64,
     pub amount_modified: bool,
     pub description: String,
@@ -63,6 +63,7 @@ impl Repository for Transactions {
         let raw = sqlx::query_file!(
             "src/repositories/queries/create_transaction.sql",
             transaction.chat_id,
+            transaction.category_id,
             transaction.amount,
             transaction.description,
             transaction.currency_code.as_code_str(),

@@ -100,6 +100,7 @@ impl Service for Categories {
             category.target_amount = Some(target_amount);
         }
 
+        category.updated_at = Utc::now();
         self.repository.update_category(category.to_owned()).await?;
 
         Ok(category)

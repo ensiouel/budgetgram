@@ -2,8 +2,8 @@ use crate::handlers::callback;
 use crate::models::callback::{Declinable, GrammaticalNumber, Labeled, NameCase};
 use crate::proto::callback::v1::callback::Query;
 use crate::proto::callback::v1::{
-    Callback, CategoryDirection, CreateCategory, ShowCategoriesSettings, ShowCategorySettings,
-    ShowSettings,
+    Callback, CategoryDirection, CreateCategory, ShowCategoryList, ShowCategorySettings,
+    ShowMainSettings,
 };
 use crate::services;
 use std::sync::Arc;
@@ -13,14 +13,14 @@ use teloxide::types::{InlineKeyboardButton, InlineKeyboardMarkup};
 pub struct MessageBuilder {
     callback_query: CallbackQuery,
     service: Arc<dyn services::categories::Service>,
-    query: ShowCategoriesSettings,
+    query: ShowCategoryList,
 }
 
 impl MessageBuilder {
     pub fn new(
         callback_query: CallbackQuery,
         service: Arc<dyn services::categories::Service>,
-        query: ShowCategoriesSettings,
+        query: ShowCategoryList,
     ) -> Self {
         Self {
             callback_query,
@@ -89,7 +89,7 @@ impl callback::MessageBuilder for MessageBuilder {
             InlineKeyboardButton::callback(
                 "🔙 Назад",
                 String::try_from(Callback {
-                    query: Option::from(Query::ShowSettings(ShowSettings {})),
+                    query: Option::from(Query::ShowMainSettings(ShowMainSettings {})),
                 })
                 .unwrap(),
             ),

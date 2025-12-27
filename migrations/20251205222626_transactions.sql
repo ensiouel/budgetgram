@@ -2,7 +2,7 @@ CREATE TABLE transactions
 (
     id              BIGSERIAL PRIMARY KEY,
     chat_id         BIGINT      NOT NULL,
-    category_id     BIGSERIAL REFERENCES categories (id),
+    category_id     BIGINT REFERENCES categories (id),
     amount          BIGINT      NOT NULL,
     amount_modified BOOLEAN     NOT NULL DEFAULT FALSE,
     description     TEXT        NOT NULL DEFAULT '',

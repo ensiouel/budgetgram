@@ -1,25 +1,28 @@
 use crate::handlers::callback;
-use crate::proto::callback::v1::CancelUpdateCategory;
+use crate::proto::callback::v1::ApproveTransactionCategory;
 use crate::services;
 use std::sync::Arc;
 use teloxide::prelude::CallbackQuery;
-use teloxide::types::{InlineKeyboardButton, InlineKeyboardMarkup};
+use teloxide::types::InlineKeyboardMarkup;
 
 pub struct MessageBuilder {
     callback_query: CallbackQuery,
-    service: Arc<dyn services::categories::Service>,
-    callback: CancelUpdateCategory,
+    categories_service: Arc<dyn services::categories::Service>,
+    transactions_service: Arc<dyn services::transactions::Service>,
+    callback: ApproveTransactionCategory,
 }
 
 impl MessageBuilder {
     pub fn new(
         callback_query: CallbackQuery,
-        service: Arc<dyn services::categories::Service>,
-        callback: CancelUpdateCategory,
+        categories_service: Arc<dyn services::categories::Service>,
+        transactions_service: Arc<dyn services::transactions::Service>,
+        callback: ApproveTransactionCategory,
     ) -> Self {
         Self {
             callback_query,
-            service,
+            categories_service,
+            transactions_service,
             callback,
         }
     }

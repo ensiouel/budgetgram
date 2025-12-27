@@ -174,7 +174,7 @@ impl callback::MessageBuilder for MessageBuilder {
                 InlineKeyboardButton::callback(
                     "🔙 Назад",
                     String::try_from(Callback {
-                        query: Option::from(Query::ShowCategoriesSettings(
+                        query: Option::from(Query::ShowCategoryList(
                             self.callback.navigated_from.unwrap(),
                         )),
                     })

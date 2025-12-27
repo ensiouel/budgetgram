@@ -4,10 +4,7 @@ use crate::handlers::categories::message_builders::{
     cancel_update_category, create_category, show_categories_settings, show_category_settings,
     update_category,
 };
-use crate::proto::callback::v1::{
-    CancelCreateCategory, CancelUpdateCategory, CreateCategory, ShowCategoriesSettings,
-    ShowCategorySettings, UpdateCategory,
-};
+use crate::proto::callback::v1::{CancelUpdateCategory, CreateCategory, ShowCategoryList, ShowCategorySettings, UpdateCategory};
 use crate::services;
 use crate::telegram::{State};
 use crate::telegram::{Dialog, HandlerResult};
@@ -73,7 +70,7 @@ pub async fn show_categories_settings(
     bot: Bot,
     _dialog: Dialog,
     callback_query: CallbackQuery,
-    query: ShowCategoriesSettings,
+    query: ShowCategoryList,
     categories_service: Arc<dyn services::categories::Service>,
 ) -> HandlerResult {
     let builder = show_categories_settings::MessageBuilder::new(

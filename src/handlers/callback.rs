@@ -1,4 +1,4 @@
-use crate::handlers::{categories, settings};
+use crate::handlers::{categories, settings, transactions};
 use crate::proto::callback::v1::Callback;
 use crate::proto::callback::v1::callback::Query;
 use crate::services;
@@ -13,6 +13,7 @@ pub async fn match_callback_query(
     dialog: Dialog,
     callback_query: CallbackQuery,
     categories_service: Arc<dyn services::categories::Service>,
+    transactions_service: Arc<dyn services::transactions::Service>,
 ) -> HandlerResult {
     let Some(data) = callback_query.to_owned().data else {
         return Ok(());
@@ -25,7 +26,7 @@ pub async fn match_callback_query(
     };
 
     match query {
-        Query::ShowSettings(show_setting) => {
+        Query::ShowMainSettings(show_setting) => {
             settings::callback_handlers::show_settings(
                 bot.to_owned(),
                 dialog.to_owned(),
@@ -34,7 +35,7 @@ pub async fn match_callback_query(
             )
             .await?;
         }
-        Query::ShowCategoriesSettings(show_categories_settings) => {
+        Query::ShowCategoryList(show_categories_settings) => {
             categories::callback_handlers::show_categories_settings(
                 bot.to_owned(),
                 dialog.to_owned(),
@@ -78,6 +79,17 @@ pub async fn match_callback_query(
                 callback_query.to_owned(),
                 update_category.to_owned(),
                 categories_service,
+            )
+            .await?;
+        }
+        Query::CreateTransaction(create_transaction) => {
+            transactions::callback_handlers::create_transaction(
+                bot.to_owned(),
+                dialog.to_owned(),
+                callback_query.to_owned(),
+                categories_service,
+                transactions_service,
+                create_transaction.to_owned(),
             )
             .await?;
         }

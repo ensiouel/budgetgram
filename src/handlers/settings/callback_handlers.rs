@@ -1,6 +1,6 @@
 use crate::handlers::callback::MessageBuilder;
 use crate::handlers::settings::message_builders::show_settings;
-use crate::proto::callback::v1::ShowSettings;
+use crate::proto::callback::v1::{ShowMainSettings};
 use crate::telegram::{Dialog, HandlerResult};
 use teloxide::Bot;
 use teloxide::payloads::EditMessageTextSetters;
@@ -11,7 +11,7 @@ pub async fn show_settings(
     bot: Bot,
     _dialog: Dialog,
     callback_query: CallbackQuery,
-    _query: ShowSettings,
+    _query: ShowMainSettings,
 ) -> HandlerResult {
     let builder = show_settings::MessageBuilder::new();
 
